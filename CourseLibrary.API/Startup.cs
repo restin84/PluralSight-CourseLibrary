@@ -10,45 +10,44 @@ using Microsoft.Extensions.Hosting;
 
 namespace CourseLibrary.API
 {
-    public class Startup
-    {
-        public Startup(IConfiguration configuration)
-        {
-            Configuration = configuration;
-        }
-
-        public IConfiguration Configuration { get; }
-
-        // This method gets called by the runtime. Use this method to add services to the container.
-        public void ConfigureServices(IServiceCollection services)
-        {
-           services.AddControllers();
-             
-            services.AddScoped<ICourseLibraryRepository, CourseLibraryRepository>();
-
-            services.AddDbContext<CourseLibraryContext>(options =>
-            {
-                options.UseSqlServer(
-                    @"Server=(localdb)\mssqllocaldb;Database=CourseLibraryDB;Trusted_Connection=True;");
-            }); 
-        }
-
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
-        {
-            if (env.IsDevelopment())
-            {
-                app.UseDeveloperExceptionPage();
-            }
-
-            app.UseRouting();
-
-            app.UseAuthorization();
-
-            app.UseEndpoints(endpoints =>
-            {
-                endpoints.MapControllers();
-            });
-        }
+  public class Startup
+  {
+    public Startup(IConfiguration configuration) {
+      Configuration = configuration;
     }
+
+    public IConfiguration Configuration { get; }
+
+    // This method gets called by the runtime. Use this method to add services to the container.
+    public void ConfigureServices(IServiceCollection services) {
+      services.AddControllers(setupAction => {
+        //if ReturnHttpNotAcceptable then no accept header => defualt format, 
+        //accept header with supported type is okay, and accept header with 
+        //unsupported type => 406 not acceptable
+        setupAction.ReturnHttpNotAcceptable = true;
+      }).AddXmlDataContractSerializerFormatters(); 
+
+      services.AddScoped<ICourseLibraryRepository, CourseLibraryRepository>();
+
+      services.AddDbContext<CourseLibraryContext>(options => {
+        options.UseSqlServer(
+            @"Server=(localdb)\mssqllocaldb;Database=CourseLibraryDB;Trusted_Connection=True;");
+      });
+    }
+
+    // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+    public void Configure(IApplicationBuilder app, IWebHostEnvironment env) {
+      if (env.IsDevelopment()) {
+        app.UseDeveloperExceptionPage();
+      }
+
+      app.UseRouting();
+
+      app.UseAuthorization();
+
+      app.UseEndpoints(endpoints => {
+        endpoints.MapControllers();
+      });
+    }
+  }
 }
