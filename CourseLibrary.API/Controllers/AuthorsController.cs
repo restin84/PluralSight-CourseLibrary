@@ -26,6 +26,7 @@ namespace CourseLibrary.API.Controllers
     }
 
     [HttpGet]
+    [HttpHead]
     public ActionResult<IEnumerable<AuthorDto>> GetAuthors() {
       var authorsFromRepo = courseLibraryRepository.GetAuthors();
       //the IMapper instance knows how to do this mapping because of 
@@ -34,6 +35,7 @@ namespace CourseLibrary.API.Controllers
     }
 
     [HttpGet("{authorId}")]
+    [HttpHead]
     public ActionResult<AuthorDto> GetAuthor(Guid authorId) {
       var authorFromRepo = courseLibraryRepository.GetAuthor(authorId);
 
