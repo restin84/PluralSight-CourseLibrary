@@ -26,7 +26,7 @@ namespace CourseLibrary.API.Controllers
 
     [HttpGet] //authorId will automatically be filled with the Guid from the URI
     public ActionResult<IEnumerable<CourseDto>> GetCoursesForAuthor(Guid authorId) {
-      if (!courseLibraryRepository.AuthorExists(authorId)) {
+      if (!courseLibraryRepository. AuthorExists(authorId)) {
         return NotFound();
       }
 
@@ -34,6 +34,21 @@ namespace CourseLibrary.API.Controllers
 
       //return the courses from the repo mapped to an IEnumerable of CourseDtos
       return Ok(mapper.Map<IEnumerable<CourseDto>>(coursesForAuthorFromRepo));
+    }
+
+    [HttpGet("{courseId}")]
+    public ActionResult<CourseDto> GetCourseForAuthor(Guid authorId, Guid courseId) {
+      if (!courseLibraryRepository.AuthorExists(authorId)) {
+        return NotFound();
+      }
+
+      var courseForAuthorFromRepo = courseLibraryRepository.GetCourse(authorId, courseId);
+
+      if (courseForAuthorFromRepo == null) {
+        return NotFound();
+      }
+
+      return Ok(mapper.Map<CourseDto>(courseForAuthorFromRepo));
     }
   }
 }
