@@ -27,8 +27,8 @@ namespace CourseLibrary.API.Controllers
 
     [HttpGet]
     [HttpHead]
-    public ActionResult<IEnumerable<AuthorDto>> GetAuthors() {
-      var authorsFromRepo = courseLibraryRepository.GetAuthors();
+    public ActionResult<IEnumerable<AuthorDto>> GetAuthors(string mainCategory) {
+      var authorsFromRepo = courseLibraryRepository.GetAuthors(mainCategory);
       //the IMapper instance knows how to do this mapping because of 
       //this AuthorsProfile 
       return Ok(mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo));
