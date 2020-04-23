@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using CourseLibrary.API.Helpers;
 using CourseLibrary.API.Models;
+using CourseLibrary.API.ResourceParameters;
 using CourseLibrary.API.Services;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -28,8 +29,8 @@ namespace CourseLibrary.API.Controllers
     [HttpGet]
     [HttpHead]
     public ActionResult<IEnumerable<AuthorDto>> GetAuthors(
-      string mainCategory, string searchQuery) {
-      var authorsFromRepo = courseLibraryRepository.GetAuthors(mainCategory, searchQuery);
+      [FromQuery]AuthorsResourceParameters authorsResourceParameters) {
+      var authorsFromRepo = courseLibraryRepository.GetAuthors(authorsResourceParameters);
       //the IMapper instance knows how to do this mapping because of 
       //this AuthorsProfile 
       return Ok(mapper.Map<IEnumerable<AuthorDto>>(authorsFromRepo));
