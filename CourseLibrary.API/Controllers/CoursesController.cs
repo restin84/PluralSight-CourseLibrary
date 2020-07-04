@@ -70,5 +70,26 @@ namespace CourseLibrary.API.Controllers
         new { authorId = authorId, courseId = courseToReturn.Id }, 
         courseToReturn);
     }
+
+    [HttpPut("{courseId}")]
+    public ActionResult UpdateCourseForAuthor(Guid authorId, Guid courseId, CourseForUpdateDto course) {
+      if (!courseLibraryRepository.AuthorExists(authorId)) {
+        return NotFound();
+      }
+
+      var courseForAuthorFromRepo = courseLibraryRepository.GetCourse(authorId, courseId);
+
+      if (courseForAuthorFromRepo == null) {
+        return NotFound();
+      }
+
+      mapper.Map(course, courseForAuthorFromRepo);
+
+      courseLibraryRepository.UpdateCourse(courseForAuthorFromRepo);
+
+      courseLibraryRepository.Save();
+
+      return NoContent();
+    }
   }
 }
