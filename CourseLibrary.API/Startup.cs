@@ -10,6 +10,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json.Serialization;
 using System;
 
 namespace CourseLibrary.API
@@ -29,7 +30,12 @@ namespace CourseLibrary.API
         //accept header with supported type is okay, and accept header with 
         //unsupported type => 406 not acceptable
         setupAction.ReturnHttpNotAcceptable = true;
-      }).AddXmlDataContractSerializerFormatters()
+      })
+      .AddNewtonsoftJson(setupAction => {
+        setupAction.SerializerSettings.ContractResolver =
+          new CamelCasePropertyNamesContractResolver();
+      })
+      .AddXmlDataContractSerializerFormatters()
       .ConfigureApiBehaviorOptions(setupAction => {
         setupAction.InvalidModelStateResponseFactory = context => {
           //create the problem details object
