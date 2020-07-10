@@ -122,7 +122,14 @@ namespace CourseLibrary.API.Controllers
 
       var courseToPatch = mapper.Map<CourseForUpdateDto>(courseForAuthorFromRepo);
 
-      patchDocument.ApplyTo(courseToPatch);
+      //add validation
+      //because we are passing the ModelState
+      patchDocument.ApplyTo(courseToPatch, ModelState);
+
+      if (!TryValidateModel(courseToPatch)) {
+        return ValidationProblem(ModelState);
+      }
+
 
       mapper.Map(courseToPatch, courseForAuthorFromRepo);
 
