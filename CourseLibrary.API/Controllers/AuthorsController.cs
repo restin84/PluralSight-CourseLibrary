@@ -13,14 +13,13 @@ namespace CourseLibrary.API.Controllers
 {
   [ApiController]
   [Route("api/authors")]
-  public class AuthorsController : ControllerBase
-  {
+  public class AuthorsController : ControllerBase {
     private readonly IMapper mapper;
     private readonly ICourseLibraryRepository courseLibraryRepository;
 
     public AuthorsController(ICourseLibraryRepository courseLibraryRepository,
       IMapper mapper) {
-      this.mapper = mapper ?? 
+      this.mapper = mapper ??
         throw new ArgumentException(nameof(mapper));
       this.courseLibraryRepository = courseLibraryRepository ??
         throw new ArgumentNullException(nameof(courseLibraryRepository));
@@ -29,7 +28,7 @@ namespace CourseLibrary.API.Controllers
     [HttpGet]
     [HttpHead]
     public ActionResult<IEnumerable<AuthorDto>> GetAuthors(
-      [FromQuery]AuthorsResourceParameters authorsResourceParameters) {
+      [FromQuery] AuthorsResourceParameters authorsResourceParameters) {
       var authorsFromRepo = courseLibraryRepository.GetAuthors(authorsResourceParameters);
       //the IMapper instance knows how to do this mapping because of 
       //this AuthorsProfile 
@@ -67,6 +66,20 @@ namespace CourseLibrary.API.Controllers
     public IActionResult GetAuthorsOptions() {
       Response.Headers.Add("Allow", "GET,OPTIONS,POST");
       return Ok();
+    }
+
+    [HttpDelete("{authorId}")]
+    public ActionResult DeleteAuthor(Guid authorId) {
+      var authorFromRepo = courseLibraryRepository.GetAuthor(authorId);
+
+      if (authorFromRepo == null) {
+        return NotFound();
+      }
+
+      courseLibraryRepository.DeleteAuthor(authorFromRepo);
+      courseLibraryRepository.Save();
+
+      return NoContent();
     }
   }
 }
